@@ -35,3 +35,7 @@ cargo_metadata = "^0.9"
 itertools = "^0.8"
 structopt = "^0.3"
 time = "^0.1"
+
+[dependencies.phf]
+version = "0.9"
+features = ["macros"]

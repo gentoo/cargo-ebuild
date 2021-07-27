@@ -8,6 +8,7 @@
  * except according to those terms.
  */
 
+mod license;
 mod metadata;
 
 use anyhow::{format_err, Context, Result};
@@ -20,16 +21,8 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use license::{normalize_license, split_spdx_license};
 use metadata::EbuildConfig;
-
-fn parse_license<'a>(lic_str: &'a str) -> Vec<&'a str> {
-    lic_str
-        .split('/')
-        .flat_map(|l| l.split(" OR "))
-        .flat_map(|l| l.split(" AND "))
-        .map(str::trim)
-        .collect()
-}
 
 fn generate_lockfile(manifest_path: Option<PathBuf>) -> Result<()> {
     let cargo = std::env::var("CARGO")
@@ -86,9 +79,16 @@ pub fn gen_ebuild_data(manifest_path: Option<PathBuf>) -> Result<EbuildConfig> {
             root_pkg = Some(pkg.clone());
         }
 
-        if let Some(lic_list) = pkg.license.as_ref().map(|l| parse_license(&l)) {
+        if let Some(lic_list) = pkg.license.as_ref().map(|l| split_spdx_license(&l)) {
             for lic in lic_list.iter() {
-                licenses.insert(lic.to_string());
+                if let Some(norm) = normalize_license(&lic) {
+                    // Add the normalized license name
+                    licenses.insert(norm.to_string());
+                } else {
+                    // Add the unknown license name to be corrected manually
+                    println!("WARNING: unknown license \"{}\", please correct manually", &lic);
+                    licenses.insert(lic.to_string());
+                }
             }
         }
 
