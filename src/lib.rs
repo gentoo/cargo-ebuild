@@ -123,7 +123,11 @@ pub fn gen_ebuild_data(manifest_path: Option<PathBuf>) -> Result<EbuildConfig> {
     Ok(EbuildConfig::from_package(root_pkg, crates, licenses))
 }
 
-pub fn write_ebuild(ebuild_data: EbuildConfig, ebuild_path: impl AsRef<Path>) -> Result<()> {
+pub fn write_ebuild(
+    ebuild_data: EbuildConfig,
+    ebuild_path: impl AsRef<Path>,
+    template_path: Option<impl AsRef<Path>>,
+) -> Result<()> {
     // Open the file where we'll write the ebuild
     let mut file = OpenOptions::new()
         .write(true)
@@ -137,7 +141,11 @@ pub fn write_ebuild(ebuild_data: EbuildConfig, ebuild_path: impl AsRef<Path>) ->
 
     let mut tera = tera::Tera::default();
     let mut context = tera::Context::from_serialize(ebuild_data)?;
-    tera.add_raw_template("ebuild.tera", include_str!("ebuild.tera"))?;
+    if let Some(template) = template_path {
+        tera.add_template_file(template, Some("ebuild.tera"))?;
+    } else {
+        tera.add_raw_template("ebuild.tera", include_str!("ebuild.tera"))?;
+    }
 
     context.insert("cargo_ebuild_ver", env!("CARGO_PKG_VERSION"));
     context.insert("this_year", &time::OffsetDateTime::now_utc().year());
