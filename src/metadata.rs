@@ -10,8 +10,10 @@
 
 use cargo_metadata::Package;
 use itertools::Itertools;
+use serde::Serialize;
 use std::collections::BTreeSet;
 
+#[derive(Serialize)]
 pub struct EbuildConfig {
     pub name: String,
     pub version: String,

@@ -13,11 +13,10 @@ mod metadata;
 
 use anyhow::{format_err, Context, Result};
 use cargo_lock::Lockfile;
-use cargo_metadata::MetadataCommand;
 use cargo_metadata::CargoOpt;
+use cargo_metadata::MetadataCommand;
 use std::collections::BTreeSet;
 use std::fs::OpenOptions;
-use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -86,7 +85,10 @@ pub fn gen_ebuild_data(manifest_path: Option<PathBuf>) -> Result<EbuildConfig> {
                     licenses.insert(norm.to_string());
                 } else {
                     // Add the unknown license name to be corrected manually
-                    println!("WARNING: unknown license \"{}\", please correct manually", &lic);
+                    println!(
+                        "WARNING: unknown license \"{}\", please correct manually",
+                        &lic
+                    );
                     licenses.insert(lic.to_string());
                 }
             }
@@ -133,19 +135,16 @@ pub fn write_ebuild(ebuild_data: EbuildConfig, ebuild_path: impl AsRef<Path>) ->
             ebuild_path.as_ref().display()
         ))?;
 
-    // write the contents out
-    write!(
-        file,
-        include_str!("ebuild.template"),
-        description = ebuild_data.description.trim(),
-        homepage = ebuild_data.homepage.trim(),
-        license = ebuild_data.license.trim(),
-        crates = ebuild_data.crates.join(""),
-        cargo_ebuild_ver = env!("CARGO_PKG_VERSION"),
-        this_year = time::OffsetDateTime::now_utc().year(),
-    )
-    .context(format!(
-        "Failed to write to {}",
-        ebuild_path.as_ref().display()
-    ))
+    let mut tera = tera::Tera::default();
+    let mut context = tera::Context::from_serialize(ebuild_data)?;
+    tera.add_raw_template("ebuild.tera", include_str!("ebuild.tera"))?;
+
+    context.insert("cargo_ebuild_ver", env!("CARGO_PKG_VERSION"));
+    context.insert("this_year", &time::OffsetDateTime::now_utc().year());
+
+    tera.render_to("ebuild.tera", &context, &mut file)
+        .context(format!(
+            "Failed to write to {}",
+            ebuild_path.as_ref().display()
+        ))
 }
