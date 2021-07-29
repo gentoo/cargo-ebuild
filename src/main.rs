@@ -22,6 +22,9 @@ struct Args {
     #[structopt(name = "PATH", long = "manifest-path", parse(from_os_str))]
     /// Path to Cargo.toml.
     manifest_path: Option<PathBuf>,
+    #[structopt(name = "TEMPLATE", long = "template-path", short)]
+    /// Non-standard template
+    template_path: Option<PathBuf>,
 }
 
 #[derive(StructOpt, Debug)]
@@ -46,7 +49,7 @@ fn main() -> Result<()> {
 
     let ebuild_path = format!("{}-{}.ebuild", ebuild_data.name, ebuild_data.version);
 
-    write_ebuild(ebuild_data, &ebuild_path)?;
+    write_ebuild(ebuild_data, &ebuild_path, opt.template_path.as_ref())?;
 
     println!("Wrote: {}", ebuild_path);
 
