@@ -1,0 +1,31 @@
+name: DCO check
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  dco:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.after }}
+    - name: check Signed-off-by
+      run: |
+        __COMMIT_MSG="$(git log --format=%B -n 1 ${{ github.event.after }})"
+        if [[ ! ${__COMMIT_MSG} =~ "Signed-off-by:" ]]; then
+          __errmsg="::error ::Missing GCO sign-off
+            Please read the terms of Gentoo Certificate of Origin[1] and acknowledge them by adding a sign-off to all your commits.
+            [1] https://www.gentoo.org/glep/glep-0076.html#certificate-of-origin"
+          __errmsg="${__errmsg//'%'/'%25'}"
+          __errmsg="${__errmsg//$'\n'/'%0A'}"
+          __errmsg="${__errmsg//$'\r'/'%0D'}"
+
+          echo "${__errmsg}"
+          exit 1
+        else
+          echo "::set-output name=dco::ok"
+        fi
