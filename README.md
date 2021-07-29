@@ -1,6 +1,6 @@
 # cargo-ebuild
 
-[![Build Status](https://travis-ci.org/cardoe/cargo-ebuild.svg?branch=master)](https://travis-ci.org/cardoe/cargo-ebuild)
+[![Build Status](https://github.com/gentoo/cargo-ebuild/actions/workflows/rust.yml/badge.svg)](https://github.com/gentoo/cargo-ebuild/actions)
 [![Rust version]( https://img.shields.io/badge/rust-1.26-blue.svg)]()
 [![Latest Version](https://img.shields.io/crates/v/cargo-ebuild.svg)](https://crates.io/crates/cargo-ebuild)
 [![All downloads](https://img.shields.io/crates/d/cargo-ebuild.svg)](https://crates.io/crates/cargo-ebuild)
