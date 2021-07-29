@@ -141,6 +141,8 @@ pub fn write_ebuild(
 
     let mut tera = tera::Tera::default();
     let mut context = tera::Context::from_serialize(ebuild_data)?;
+
+    tera.add_raw_template("base.tera", include_str!("base.tera"))?;
     if let Some(template) = template_path {
         tera.add_template_file(template, Some("ebuild.tera"))?;
     } else {
