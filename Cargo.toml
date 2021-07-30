@@ -30,8 +30,8 @@ maintenance = { status = "passively-maintained" }
 
 [dependencies]
 anyhow = "^1"
-cargo-lock = "^4.0"
-cargo_metadata = "^0.9"
-itertools = "^0.8"
+cargo-lock = "^7.0"
+cargo_metadata = "^0.14"
+itertools = "^0.10"
 structopt = "^0.3"
-time = "^0.1"
+time = "^0.2"
