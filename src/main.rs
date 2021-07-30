@@ -24,6 +24,7 @@ struct Args {
     manifest_path: Option<PathBuf>,
 }
 
+#[derive(StructOpt, Debug)]
 #[structopt(
     name = "cargo-ebuild",
     bin_name = "cargo",
@@ -31,7 +32,6 @@ struct Args {
     about = "Generates an ebuild for a given Cargo project",
     global_settings(&[AppSettings::ColoredHelp])
 )]
-#[derive(StructOpt, Debug)]
 enum Opt {
     #[structopt(name = "ebuild")]
     /// Generates an ebuild for a given Cargo project
