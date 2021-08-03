@@ -142,7 +142,7 @@ pub fn write_ebuild(ebuild_data: EbuildConfig, ebuild_path: impl AsRef<Path>) ->
         license = ebuild_data.license.trim(),
         crates = ebuild_data.crates.join(""),
         cargo_ebuild_ver = env!("CARGO_PKG_VERSION"),
-        this_year = 1900 + time::now().tm_year,
+        this_year = time::OffsetDateTime::now_utc().year(),
     )
     .context(format!(
         "Failed to write to {}",
