@@ -12,6 +12,7 @@ static SPDX_TO_LICENSE: phf::Map<&'static str, &'static str> = phf_map! {
     "Apache-1.0" => "Apache-1.0",
     "Apache-1.1" => "Apache-1.1",
     "Apache-2.0" => "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception" => "Apache-2.0-with-LLVM-exceptions",
     "APL-1.0" => "APL-1.0",
     "APSL-2.0" => "APSL-2",
     "Artistic-1.0" => "Artistic",
