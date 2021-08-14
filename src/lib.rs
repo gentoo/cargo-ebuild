@@ -16,17 +16,17 @@ use cargo_metadata::CargoOpt;
 use cargo_metadata::MetadataCommand;
 use std::collections::BTreeSet;
 use std::fs::OpenOptions;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use license::{normalize_license, split_spdx_license};
 use metadata::EbuildConfig;
 
-pub fn gen_ebuild_data(manifest_path: Option<PathBuf>) -> Result<EbuildConfig> {
+pub fn gen_ebuild_data(manifest_path: Option<&Path>) -> Result<EbuildConfig> {
     let mut cmd = MetadataCommand::new();
 
     cmd.features(CargoOpt::AllFeatures);
 
-    if let Some(path) = manifest_path.as_ref() {
+    if let Some(path) = manifest_path {
         cmd.manifest_path(path);
     }
 
@@ -89,18 +89,18 @@ pub fn gen_ebuild_data(manifest_path: Option<PathBuf>) -> Result<EbuildConfig> {
 
 pub fn write_ebuild(
     ebuild_data: EbuildConfig,
-    ebuild_path: impl AsRef<Path>,
-    template_path: Option<impl AsRef<Path>>,
+    ebuild_path: &Path,
+    template_path: Option<&Path>,
 ) -> Result<()> {
     // Open the file where we'll write the ebuild
     let mut file = OpenOptions::new()
         .write(true)
         .create(true)
         .truncate(true)
-        .open(&ebuild_path)
+        .open(ebuild_path)
         .context(format!(
             "Unable to create {}",
-            ebuild_path.as_ref().display()
+            ebuild_path.display()
         ))?;
 
     let mut tera = tera::Tera::default();
@@ -119,6 +119,6 @@ pub fn write_ebuild(
     tera.render_to("ebuild.tera", &context, &mut file)
         .context(format!(
             "Failed to write to {}",
-            ebuild_path.as_ref().display()
+            ebuild_path.display()
         ))
 }
