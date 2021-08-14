@@ -45,11 +45,11 @@ fn main() -> Result<()> {
     let Opt::Ebuild(opt) = Opt::from_args();
 
     // compute the data from the package that the build needs
-    let ebuild_data = gen_ebuild_data(opt.manifest_path)?;
+    let ebuild_data = gen_ebuild_data(opt.manifest_path.as_deref())?;
 
     let ebuild_path = format!("{}-{}.ebuild", ebuild_data.name, ebuild_data.version);
 
-    write_ebuild(ebuild_data, &ebuild_path, opt.template_path.as_ref())?;
+    write_ebuild(ebuild_data, ebuild_path.as_ref(), opt.template_path.as_deref())?;
 
     println!("Wrote: {}", ebuild_path);
 
