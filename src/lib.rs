@@ -8,6 +8,7 @@
  * except according to those terms.
  */
 
+mod audit;
 mod license;
 mod metadata;
 
@@ -18,10 +19,11 @@ use std::collections::BTreeSet;
 use std::fs::OpenOptions;
 use std::path::Path;
 
+use audit::audit_package;
 use license::{normalize_license, split_spdx_license};
 use metadata::EbuildConfig;
 
-pub fn gen_ebuild_data(manifest_path: Option<&Path>) -> Result<EbuildConfig> {
+pub fn gen_ebuild_data(manifest_path: Option<&Path>, audit: bool) -> Result<EbuildConfig> {
     let mut cmd = MetadataCommand::new();
 
     cmd.features(CargoOpt::AllFeatures);
@@ -43,6 +45,10 @@ pub fn gen_ebuild_data(manifest_path: Option<&Path>) -> Result<EbuildConfig> {
         .root
         .as_ref()
         .ok_or_else(|| format_err!("cargo metadata failed to resolve the root package"))?;
+
+    if audit {
+        audit_package(metadata.workspace_root.as_ref(), manifest_path)?;
+    }
 
     let mut licenses = BTreeSet::new();
     let mut crates = Vec::new();
