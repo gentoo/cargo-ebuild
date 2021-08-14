@@ -12,39 +12,14 @@ mod license;
 mod metadata;
 
 use anyhow::{format_err, Context, Result};
-use cargo_lock::Lockfile;
 use cargo_metadata::CargoOpt;
 use cargo_metadata::MetadataCommand;
 use std::collections::BTreeSet;
 use std::fs::OpenOptions;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 use license::{normalize_license, split_spdx_license};
 use metadata::EbuildConfig;
-
-fn generate_lockfile(manifest_path: Option<PathBuf>) -> Result<()> {
-    let cargo = std::env::var("CARGO")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| PathBuf::from("cargo"));
-
-    let mut lock_cmd = Command::new(cargo);
-    lock_cmd.arg("generate-lockfile");
-
-    if let Some(path) = manifest_path.as_ref() {
-        lock_cmd.arg("--manifest-path");
-        lock_cmd.arg(path.as_os_str());
-    }
-
-    let lock_output = lock_cmd.output()?;
-
-    if !lock_output.status.success() {
-        let stderr = String::from_utf8_lossy(&lock_output.stderr);
-        return Err(format_err!("unable to generate lockfile:\n{}", stderr));
-    }
-
-    Ok(())
-}
 
 pub fn gen_ebuild_data(manifest_path: Option<PathBuf>) -> Result<EbuildConfig> {
     let mut cmd = MetadataCommand::new();
@@ -97,28 +72,17 @@ pub fn gen_ebuild_data(manifest_path: Option<PathBuf>) -> Result<EbuildConfig> {
         if pkg.license_file.is_some() {
             println!("WARNING: {} uses a license-file, not handled", pkg.name);
         }
-    }
 
-    let root_pkg = root_pkg
-        .ok_or_else(|| format_err!("unable to determine package to generate ebuild for"))?;
-
-    let lockfile_path = metadata.workspace_root.join("Cargo.lock");
-
-    // Generate lockfile if it doesn't exists
-    if std::fs::metadata(&lockfile_path).is_err() {
-        generate_lockfile(manifest_path)?;
-    }
-
-    // Check for packages that must be fetched from default registry
-    let lockfile = Lockfile::load(lockfile_path)?;
-
-    for pkg in lockfile.packages {
         if let Some(src) = pkg.source {
-            if src.is_default_registry() {
+            // Check if the crate is available at crates.io
+            if src.is_crates_io() {
                 crates.push(format!("\t{}-{}\n", pkg.name, pkg.version));
             }
         }
     }
+
+    let root_pkg = root_pkg
+        .ok_or_else(|| format_err!("unable to determine package to generate ebuild for"))?;
 
     Ok(EbuildConfig::from_package(root_pkg, crates, licenses))
 }
