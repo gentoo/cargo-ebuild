@@ -1,6 +1,6 @@
 [package]
 name = "cargo-ebuild"
-version = "0.3.2"
+version = "0.3.4-dev"
 authors = ["Doug Goldstein <cardoe@cardoe.com>"]
 license = "MIT/Apache-2.0"
 edition = "2018"
@@ -21,12 +21,6 @@ path = "src/main.rs"
 [lib]
 name = "cargo_ebuild"
 path = "src/lib.rs"
-
-[badges]
-travis-ci = { repository = "cardoe/cargo-ebuild" }
-is-it-maintained-issue-resolution = { repository = "cardoe/cargo-ebuild" }
-is-it-maintained-open-issues = { repository = "cardoe/cargo-ebuild" }
-maintenance = { status = "passively-maintained" }
 
 [dependencies]
 anyhow = "^1"
