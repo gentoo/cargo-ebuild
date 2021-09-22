@@ -23,6 +23,10 @@ struct Args {
     /// Path to Cargo.toml.
     manifest_path: Option<PathBuf>,
 
+    #[structopt(name = "PACKAGE", long = "package-name")]
+    /// Desired package name from cargo workspace
+    package_name: Option<String>,
+
     #[structopt(name = "TEMPLATE", long = "template-path", short)]
     /// Non-standard template
     template_path: Option<PathBuf>,
@@ -49,7 +53,9 @@ fn main() -> Result<()> {
     let Opt::Ebuild(opt) = Opt::from_args();
 
     // compute the data from the package that the build needs
-    let ebuild_data = gen_ebuild_data(opt.manifest_path.as_deref(), !opt.noaudit)?;
+    let ebuild_data = gen_ebuild_data( opt.manifest_path.as_deref()
+                                     , opt.package_name.as_deref()
+                                     , !opt.noaudit )?;
     let ebuild_path = format!("{}-{}.ebuild", ebuild_data.name, ebuild_data.version);
 
     write_ebuild(ebuild_data, ebuild_path.as_ref(), opt.template_path.as_deref())?;
