@@ -30,10 +30,10 @@ itertools = "^0.10"
 rustsec = "0.24.2"
 structopt = "^0.3"
 serde = { version = "1.0", features = ["derive"] }
-time = "^0.2"
+time = "^0.3"
 
 [dependencies.phf]
-version = "0.9"
+version = "0.10"
 features = ["macros"]
 
 [dependencies.tera]
