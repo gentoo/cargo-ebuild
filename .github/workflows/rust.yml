@@ -24,3 +24,5 @@ jobs:
       run: cargo audit --color always
     - name: cargo outdated
       run: cargo outdated --color always --exit-code 0
+    - name: generate and cat ebuild
+      run: target/debug/cargo-ebuild ebuild -T cargo-ebuild-template.tera && cat cargo-ebuild-*.ebuild
