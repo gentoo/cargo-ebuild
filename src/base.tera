@@ -20,6 +20,7 @@ DESCRIPTION={%- block description -%}"{{ description | trim }}"{%- endblock %}
 # does not provide this value so instead repository is used
 HOMEPAGE={%- block homepage -%}"{{ homepage }}"{%- endblock %}
 SRC_URI={%- block src_uri -%}{% raw -%}"$(cargo_crate_uris)"{%- endraw %}{%- endblock %}
+
 # License set may be more restrictive as OR is not respected
 # use cargo-license for a more accurate license picture
 LICENSE={%- block license -%}"{{ license }}"{%- endblock %}
