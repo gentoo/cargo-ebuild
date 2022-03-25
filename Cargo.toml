@@ -29,13 +29,20 @@ cargo_metadata = "0.14.2"
 itertools = "0.10.3"
 rustsec = "0.25.1"
 structopt = "0.3.26"
-serde = { version = "1.0.136", features = ["derive"] }
 time = "0.3.9"
 
 [dependencies.phf]
 version = "0.10.1"
 features = ["macros"]
 
+[dependencies.serde]
+version = "1.0.136"
+features = ["derive"]
+
 [dependencies.tera]
 version = "1.15.0"
 default-features = false
+
+[features]
+default = ["vendored-libgit2"]
+vendored-libgit2 = ["rustsec/vendored-libgit2"]
