@@ -18,7 +18,10 @@ DEPEND="
 	net-libs/libssh2:=
 "
 
-RDEPEND="${DEPEND}"
+RDEPEND="
+	${DEPEND}
+	virtual/rust
+"
 
 QA_FLAGS_IGNORED="usr/bin/cargo-ebuild"
 {% endblock %}
