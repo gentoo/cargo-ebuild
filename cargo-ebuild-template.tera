@@ -14,7 +14,6 @@ KEYWORDS={% block keyword -%}"~amd64 ~arm64 ~ppc64"{%- endblock %}
 
 {% block variables %}
 DEPEND="
-	dev-libs/libgit2:=
 	dev-libs/openssl:0=
 	net-libs/libssh2:=
 "
