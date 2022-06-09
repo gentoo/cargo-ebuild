@@ -23,15 +23,22 @@ use audit::audit_package;
 use license::{normalize_license, split_spdx_license};
 use metadata::EbuildConfig;
 
-pub fn gen_ebuild_data( manifest_path: Option<&Path>
-                      , package_name: Option<&str>
-                      , audit: bool ) -> Result<EbuildConfig> {
+pub fn gen_ebuild_data(
+    manifest_path: Option<&Path>,
+    package_name: Option<&str>,
+    filter_platform: Option<&str>,
+    audit: bool,
+) -> Result<EbuildConfig> {
     let mut cmd = MetadataCommand::new();
 
     cmd.features(CargoOpt::AllFeatures);
 
     if let Some(path) = manifest_path {
         cmd.manifest_path(path);
+    }
+
+    if let Some(platform) = filter_platform {
+        cmd.other_options(["--filter-platform".to_string(), platform.to_string()]);
     }
 
     let metadata = cmd
@@ -43,19 +50,19 @@ pub fn gen_ebuild_data( manifest_path: Option<&Path>
         .as_ref()
         .ok_or_else(|| format_err!("cargo metadata did not resolve the depend graph"))?;
 
-    let root = 
-        if let Some(pkg_name) = package_name {
-            let found_package =
-                metadata.packages.iter().find(|&p| {
-                    p.name == pkg_name
-                }).ok_or_else(|| format_err!("cargo metadata contains no specified package"))?;
-            &found_package.id
-        } else {
-            resolve
-                .root
-                .as_ref()
-                .ok_or_else(|| format_err!("cargo metadata failed to resolve the root package"))?
-        };
+    let root = if let Some(pkg_name) = package_name {
+        let found_package = metadata
+            .packages
+            .iter()
+            .find(|&p| p.name == pkg_name)
+            .ok_or_else(|| format_err!("cargo metadata contains no specified package"))?;
+        &found_package.id
+    } else {
+        resolve
+            .root
+            .as_ref()
+            .ok_or_else(|| format_err!("cargo metadata failed to resolve the root package"))?
+    };
 
     if audit {
         audit_package(metadata.workspace_root.as_ref(), manifest_path)?;
@@ -115,10 +122,7 @@ pub fn write_ebuild(
         .create(true)
         .truncate(true)
         .open(ebuild_path)
-        .context(format!(
-            "Unable to create {}",
-            ebuild_path.display()
-        ))?;
+        .context(format!("Unable to create {}", ebuild_path.display()))?;
 
     let mut tera = tera::Tera::default();
     let mut context = tera::Context::from_serialize(ebuild_data)?;
@@ -134,8 +138,5 @@ pub fn write_ebuild(
     context.insert("this_year", &time::OffsetDateTime::now_utc().year());
 
     tera.render_to("ebuild.tera", &context, &mut file)
-        .context(format!(
-            "Failed to write to {}",
-            ebuild_path.display()
-        ))
+        .context(format!("Failed to write to {}", ebuild_path.display()))
 }

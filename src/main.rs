@@ -31,6 +31,10 @@ struct Args {
     /// Non-standard template
     template_path: Option<PathBuf>,
 
+    #[structopt(name = "TRIPLE", long = "filter-platform")]
+    /// Only include resolve dependencies matching the given target-triple
+    filter_platform: Option<String>,
+
     #[structopt(long)]
     noaudit: bool,
 }
@@ -53,12 +57,19 @@ fn main() -> Result<()> {
     let Opt::Ebuild(opt) = Opt::from_args();
 
     // compute the data from the package that the build needs
-    let ebuild_data = gen_ebuild_data( opt.manifest_path.as_deref()
-                                     , opt.package_name.as_deref()
-                                     , !opt.noaudit )?;
+    let ebuild_data = gen_ebuild_data(
+        opt.manifest_path.as_deref(),
+        opt.package_name.as_deref(),
+        opt.filter_platform.as_deref(),
+        !opt.noaudit,
+    )?;
     let ebuild_path = format!("{}-{}.ebuild", ebuild_data.name, ebuild_data.version);
 
-    write_ebuild(ebuild_data, ebuild_path.as_ref(), opt.template_path.as_deref())?;
+    write_ebuild(
+        ebuild_data,
+        ebuild_path.as_ref(),
+        opt.template_path.as_deref(),
+    )?;
 
     println!("Wrote: {}", ebuild_path);
 
