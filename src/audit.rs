@@ -3,7 +3,7 @@ use std::path::Path;
 use std::process::Command;
 
 use anyhow::{format_err, Context, Result};
-use rustsec::lockfile::Lockfile;
+use rustsec::Lockfile;
 use rustsec::report::{Settings, VulnerabilityInfo};
 use rustsec::{Database, Report, Vulnerability};
 
