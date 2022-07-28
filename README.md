@@ -13,10 +13,16 @@ to build a Cargo based project for [Gentoo](https://gentoo.org/)
 
 ## Installation
 
-Install it with Cargo:
+Install it with Emerge:
 
 ```
-$ cargo install cargo-ebuild
+emerge cargo-ebuild
+```
+
+or with Cargo (using git until the crates.io version can get updated):
+
+```
+$ cargo install cargo-ebuild --git https://github.com/gentoo/cargo-ebuild
 ```
 
 ## Usage
