@@ -27,5 +27,5 @@ jobs:
           echo "${__errmsg}"
           exit 1
         else
-          echo "::set-output name=dco::ok"
+          echo "dco=ok" >> $GITHUB_OUTPUT
         fi
