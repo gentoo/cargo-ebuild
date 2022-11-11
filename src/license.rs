@@ -160,6 +160,9 @@ pub fn split_spdx_license(str: &str) -> Vec<&str> {
     str.split('/')
         .flat_map(|l| l.split(" OR "))
         .flat_map(|l| l.split(" AND "))
+        .flat_map(|l| l.split("("))
+        .flat_map(|l| l.split(")"))
+        .filter(|l| !l.is_empty())
         .map(str::trim)
         .collect()
 }
