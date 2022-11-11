@@ -78,8 +78,9 @@ pub fn gen_ebuild_data( manifest_path: Option<&Path>
                 } else {
                     // Add the unknown license name to be corrected manually
                     println!(
-                        "WARNING: unknown license \"{}\", please correct manually",
-                        &lic
+                        "WARNING: unknown license \"{}\" at package \"{}\", please correct manually",
+                        &lic,
+                        &pkg.name,
                     );
                     licenses.insert(lic.to_string());
                 }
