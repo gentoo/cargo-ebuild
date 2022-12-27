@@ -16,7 +16,10 @@ to build a Cargo based project for [Gentoo](https://gentoo.org/)
 Install it with Cargo:
 
 ```
-$ cargo install cargo-ebuild
+$ git clone https://github.com/gentoo/cargo-ebuild.git
+$ cd cargo-ebuild
+$ cargo install --path .
+$ cargo install --list | grep cargo-ebuild
 ```
 
 ## Usage
