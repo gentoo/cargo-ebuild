@@ -78,7 +78,7 @@ dependencies = [
 
 [[package]]
 name = "cargo-ebuild"
-version = "0.5.3"
+version = "0.5.4"
 dependencies = [
  "anyhow",
  "cargo-lock",
