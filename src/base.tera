@@ -26,12 +26,15 @@ SRC_URI={%- block src_uri -%}{% raw -%}"$(cargo_crate_uris)"{%- endraw %}{%- end
 LICENSE={%- block license -%}"{{ license }}"{%- endblock %}
 SLOT={%- block slot -%}"0"{%- endblock %}
 KEYWORDS={%- block keyword -%}"~amd64"{%- endblock %}
-{% block variables -%}
+{% block variables %}
+DEPEND=""
+RDEPEND="${DEPEND}"
+BDEPEND=""
 
 # rust does not use *FLAGS from make.conf, silence portage warning
 # update with proper path to binaries this crate installs, omit leading /
 QA_FLAGS_IGNORED="usr/bin/${PN}"
-{%- endblock %}
+{% endblock %}
 
 {%- block phases -%}
 {%- endblock -%}
