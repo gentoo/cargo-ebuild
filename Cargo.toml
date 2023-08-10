@@ -1,7 +1,7 @@
 [package]
 name = "cargo-ebuild"
-version = "0.5.4"
-authors = ["Doug Goldstein <cardoe@cardoe.com>"]
+version = "0.6.0"
+authors = ["Gentoo Rust Project <rust@gentoo.org>"]
 license = "MIT/Apache-2.0"
 edition = "2018"
 repository = "https://github.com/gentoo/cargo-ebuild"

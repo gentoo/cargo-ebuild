@@ -94,7 +94,7 @@ pub fn gen_ebuild_data( manifest_path: Option<&Path>
         if let Some(src) = &pkg.source {
             // Check if the crate is available at crates.io
             if src.is_crates_io() {
-                crates.push(format!("\t{}-{}\n", pkg.name, pkg.version));
+                crates.push(format!("\t{}@{}\n", pkg.name, pkg.version));
             }
         }
     }
